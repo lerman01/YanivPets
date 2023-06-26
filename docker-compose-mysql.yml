@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: "mysql"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
+  pet-app:
+    image: "pet-app"
+    environment:
+      - DB_TYPE=mysql
+      - DB_HOST=mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "3000:3000"

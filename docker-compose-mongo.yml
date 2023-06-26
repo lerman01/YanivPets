@@ -1,0 +1,14 @@
+services:
+  mongo:
+    image: "mongo"
+    ports:
+      - 27017:27017
+  pet-app:
+    image: "pet-app"
+    environment:
+      - DB_TYPE=mongo
+      - DB_HOST=mongo
+    depends_on:
+      - mongo
+    ports:
+      - 3000:3000
