@@ -5,11 +5,17 @@ export const findInvalidPetProperty = (petSchema: PetSchema, pet: PetSchema): st
         return 'type';
     }
 
-    const missingOrInvalidProperty = Object.entries(petSchema.properties).find(([petProperty, propertyValue]) =>
-        pet.properties[petProperty] === undefined || typeof pet.properties[petProperty] !== propertyValue);
+    const missingOrInvalidProperty = Object.entries(petSchema.properties).find(([schemaProperty, schemaValueType]) =>
+        pet.properties[schemaProperty] === undefined || typeof pet.properties[schemaProperty] !== schemaValueType);
 
     if (missingOrInvalidProperty) {
         return missingOrInvalidProperty[0];
+    }
+
+    const unknownProperty = Object.keys(pet.properties).find(petProperty => petSchema.properties[petProperty] === undefined);
+
+    if (unknownProperty) {
+        return unknownProperty;
     }
 
     return null;
