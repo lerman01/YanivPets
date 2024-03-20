@@ -13,6 +13,20 @@
 <button id="sendMessage">Send Message</button>
 <script>
     const peerA = new RTCPeerConnection();
+
+    peerA.onconnectionstatechange = function(event) {
+        console.log("Connection state change:", peerA.connectionState);
+    };
+
+    peerA.oniceconnectionstatechange = function(event) {
+        console.log("ICE Connection state change:", peerA.iceConnectionState);
+    };
+
+    peerA.addEventListener('error', function(event) {
+        console.log("Error:", event);
+    });
+
+
     let dataChannel = peerA.createDataChannel("channel");
 
     dataChannel.onopen = function (event) {
