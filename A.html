@@ -12,7 +12,9 @@
 <input type="text" id="messageInput" placeholder="Type your message here">
 <button id="sendMessage">Send Message</button>
 <script>
-    const peerA = new RTCPeerConnection();
+    const peerA = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    });
 
     peerA.onconnectionstatechange = function(event) {
         console.log("Connection state change:", peerA.connectionState);
