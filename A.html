@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Offer</title>
+</head>
+<body>
+    <button id="createOffer">Create Offer</button>
+    <textarea id="offer" rows="10" cols="50"></textarea>
+    <p>Share this link: <span id="shareLink"></span></p>
+
+    <script>
+
+        const createOfferButton = document.getElementById('createOffer');
+        const offerDisplay = document.getElementById('offer');
+        const shareLinkDisplay = document.getElementById('shareLink');
+
+        createOfferButton.onclick = async () => {
+            const peerConnection = new RTCPeerConnection();
+            // Add your ICE servers here
+            const dataChannel = peerConnection.createDataChannel("chat");
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+
+            // Display the offer to the user
+            offerDisplay.value = JSON.stringify(peerConnection.localDescription);
+
+            // Generate the shareable link
+            const encodedOffer = btoa(JSON.stringify(peerConnection.localDescription));
+            const shareLink = `${window.location.href}?offer=${encodedOffer}`;
+            shareLinkDisplay.textContent = shareLink;
+        };
+
+    </script>
+	
+	
+</body>
+</html>
