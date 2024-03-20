@@ -26,6 +26,12 @@
         console.log("Error:", event);
     });
 
+    peerA.onicecandidate = event => {
+        if (event.candidate) {
+            console.log("ICE Candidate from Peer A:", JSON.stringify(event.candidate));
+        }
+    };
+
 
     let dataChannel = peerA.createDataChannel("channel");
 
