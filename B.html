@@ -37,4 +37,11 @@
     });
 
     // Handle ICE candidates
-    peer
+    peerB.onicecandidate = function (event) {
+        if (event.candidate) {
+            console.log("ICE Candidate from Peer B:", JSON.stringify(event.candidate));
+        }
+    };
+</script>
+</body>
+</html>
