@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Offer</title>
+    <title>Peer A</title>
 </head>
 <body>
-    <button id="createOffer">Create Offer</button>
-    <textarea id="offer" rows="10" cols="50"></textarea>
-    <p>Share this link: <span id="shareLink"></span></p>
+<h2>Peer A</h2>
+<button id="createOffer">Create Offer</button>
+<textarea id="offer" placeholder="Paste Offer Here"></textarea>
+<textarea id="answer" placeholder="Paste Answer Here"></textarea>
+<script>
+    const peerA = new RTCPeerConnection();
+    const dataChannel = peerA.createDataChannel("channel");
 
-    <script>
+    dataChannel.onopen = function (event) {
+        dataChannel.send("Hello Peer B!");
+    };
 
-        const createOfferButton = document.getElementById('createOffer');
-        const offerDisplay = document.getElementById('offer');
-        const shareLinkDisplay = document.getElementById('shareLink');
+    dataChannel.onmessage = function (event) {
+        console.log("Message from Peer B:", event.data);
+    };
 
-        createOfferButton.onclick = async () => {
-            const peerConnection = new RTCPeerConnection();
-            // Add your ICE servers here
-            const dataChannel = peerConnection.createDataChannel("chat");
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
+    document.getElementById("createOffer").onclick = async function () {
+        const offer = await peerA.createOffer();
+        await peerA.setLocalDescription(offer);
+        document.getElementById("offer").value = JSON.stringify(offer);
+    };
 
-            // Display the offer to the user
-            offerDisplay.value = JSON.stringify(peerConnection.localDescription);
+    document.getElementById("answer").addEventListener("change", async function () {
+        const answer = JSON.parse(this.value);
+        await peerA.setRemoteDescription(answer);
+    });
 
-            // Generate the shareable link
-            const encodedOffer = btoa(JSON.stringify(peerConnection.localDescription));
-            const shareLink = `${window.location.href}?offer=${encodedOffer}`;
-            shareLinkDisplay.textContent = shareLink;
-        };
-
-    </script>
-	
-	
+    // Handle ICE candidates
+    peerA.onicecandidate = function (event) {
+        if (event.candidate) {
+            console.log("ICE Candidate from Peer A:", JSON.stringify(event.candidate));
+        }
+    };
+</script>
 </body>
 </html>

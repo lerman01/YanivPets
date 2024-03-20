@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Get Offer B</title>
+    <title>Peer B</title>
 </head>
 <body>
+<h2>Peer B</h2>
+<textarea id="offer" placeholder="Paste Offer Here"></textarea>
+<button id="createAnswer">Create Answer</button>
+<textarea id="answer" placeholder="Paste Answer Here"></textarea>
+<script>
+    const peerB = new RTCPeerConnection();
 
-	<div id="answer"></div>
-
-    <script>
-
-        console.log("TESTING")
-	
-		window.onload = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const offer = JSON.parse(atob(urlParams.get('offer')));
-    const peerConnection = new RTCPeerConnection();
-    // Add your ICE servers here
-
-    peerConnection.ondatachannel = (event) => {
+    peerB.ondatachannel = function (event) {
         const dataChannel = event.channel;
-        dataChannel.onmessage = (e) => console.log("Message received: ", e.data);
+
+        dataChannel.onmessage = function (event) {
+            console.log("Message from Peer A:", event.data);
+            dataChannel.send("Hello Peer A!");
+        };
     };
 
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+    document.getElementById("offer").addEventListener("change", async function () {
+        const offer = JSON.parse(this.value);
+        await peerB.setRemoteDescription(offer);
+        const answer = await peerB.createAnswer();
+        await peerB.setLocalDescription(answer);
+        document.getElementById("answer").value = JSON.stringify(answer);
+    });
 
-    // Display the answer for the user to copy and manually send back to Peer A
-    document.getElementById('answer').textContent = JSON.stringify(answer);
-};
-
-    </script>
-	
-	
+    // Handle ICE candidates
+    peerB.onicecandidate = function (event) {
+        if (event.candidate) {
+            console.log("ICE Candidate from Peer B:", JSON.stringify(event.candidate));
+        }
+    };
+</script>
 </body>
 </html>
