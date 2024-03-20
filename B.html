@@ -8,6 +8,9 @@
 <textarea id="offer" placeholder="Paste Offer Here"></textarea>
 <button id="createAnswer">Create Answer</button>
 <textarea id="answer" placeholder="Paste Answer Here"></textarea>
+<br>
+<input type="text" id="messageInput" placeholder="Type your message here">
+<button id="sendMessage">Send Message</button>
 <script>
     const peerB = new RTCPeerConnection();
 
@@ -16,7 +19,12 @@
 
         dataChannel.onmessage = function (event) {
             console.log("Message from Peer A:", event.data);
-            dataChannel.send("Hello Peer A!");
+        };
+
+        document.getElementById("sendMessage").onclick = function () {
+            const message = document.getElementById("messageInput").value;
+            dataChannel.send(message);
+            console.log("Message sent to Peer A:", message);
         };
     };
 
@@ -29,11 +37,4 @@
     });
 
     // Handle ICE candidates
-    peerB.onicecandidate = function (event) {
-        if (event.candidate) {
-            console.log("ICE Candidate from Peer B:", JSON.stringify(event.candidate));
-        }
-    };
-</script>
-</body>
-</html>
+    peer
