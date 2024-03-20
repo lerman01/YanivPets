@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Offer</title>
+</head>
+<body>
+
+	<div id="answer"></div>
+
+    <script>
+
+	
+		window.onload = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const offer = JSON.parse(atob(urlParams.get('offer')));
+    const peerConnection = new RTCPeerConnection();
+    // Add your ICE servers here
+
+    peerConnection.ondatachannel = (event) => {
+        const dataChannel = event.channel;
+        dataChannel.onmessage = (e) => console.log("Message received: ", e.data);
+    };
+
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    // Display the answer for the user to copy and manually send back to Peer A
+    document.getElementById('answer').textContent = JSON.stringify(answer);
+};
+
+    </script>
+	
+	
+</body>
+</html>
