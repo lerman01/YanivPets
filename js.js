@@ -7,6 +7,12 @@ addEventListener('DOMContentLoaded', () => {
     document.getElementById('startGame').onclick = () => {
         ws.send('{"kind":"match-request","gameID":"BLIBLA","minPlayers":2,"maxPlayers":2}')
     }
+    const logElement = document.getElementById('logs')
+    const originalLog = console.log;
+    console.log = (...input)=> {
+        logElement.textContent += input + '\n'
+        originalLog(...input)
+    }
 })
 
 
