@@ -84,7 +84,9 @@ class PeerConnection  {
             // this.emit("open")
         }
         this.dataChannel.onmessage = e => {
-            console.log("MESSAGE", e)
+            chatElement = document.getElementById('chat')
+            chatElement.value = e.data
+
             // this.receiveStats.onMessage(e.data.byteLength)
             // this.emit("data", msgpack.decode(new Uint8Array(e.data)))
         }

@@ -1,17 +1,20 @@
-
-const test = () =>{
-    const peerConnection = connections.values().next().value
-    peerConnection.send('YANIV TEST')
-}
+let chatElement;
 addEventListener('DOMContentLoaded', () => {
     document.getElementById('startGame').onclick = () => {
         ws.send('{"kind":"match-request","gameID":"BLIBLA","minPlayers":2,"maxPlayers":2}')
     }
     const logElement = document.getElementById('logs')
     const originalLog = console.log;
-    console.log = (...input)=> {
+    console.log = (...input) => {
         logElement.textContent += input + '\n'
         originalLog(...input)
+    }
+    chatElement = document.getElementById('chat')
+    chatElement.oninput = (e) => {
+        const peerConnection = connections.values().next().value
+        if (peerConnection) {
+            peerConnection.send(e.target.value)
+        }
     }
 })
 
@@ -43,7 +46,6 @@ ws.onmessage = (message) => {
     } else if (msg.kind === "join-match") {
         const connection = new PeerConnection(ws, msg.hostID, true, iceServers);
         connections.set(msg.hostID, connection);
-
     }
 
 }
