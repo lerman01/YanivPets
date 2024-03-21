@@ -33,7 +33,7 @@ ws.onmessage = (message) => {
 
         if (!connections.has(msg.sourceID)) {
             // Create the connection and emit it.
-            const connection = new PeerConnection(ws, msg.sourceID, false);
+            const connection = new PeerConnection(ws, msg.sourceID, false, iceServers);
             connections.set(msg.sourceID, connection);
         }
         // Forward the signaling message to our peer.
@@ -41,7 +41,7 @@ ws.onmessage = (message) => {
     } else if (msg.kind === "host-match") {
 
     } else if (msg.kind === "join-match") {
-        const connection = new PeerConnection(ws, msg.hostID, true);
+        const connection = new PeerConnection(ws, msg.hostID, true, iceServers);
         connections.set(msg.hostID, connection);
 
     }

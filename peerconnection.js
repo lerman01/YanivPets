@@ -2,14 +2,14 @@
 /** A reliable data connection to a single peer. */
 class PeerConnection  {
 
-    constructor(client, peerID, initiator) {
+    constructor(client, peerID, initiator, iceServers) {
 
         this.client = client
         this.peerID = peerID
 
         // Create a RTCPeerConnection.
         this.peerConnection = new RTCPeerConnection({
-            iceServers: client.iceServers
+            iceServers
         })
 
         // Close the connection if the browser page is closed.
