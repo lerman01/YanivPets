@@ -2,87 +2,11 @@
 <html>
 <head>
     <title>Peer A</title>
+    <script src="js.js"></script>
 </head>
 <body>
 <h2>Peer A</h2>
-<button id="createOffer">Create Offer</button>
-<textarea id="offer" placeholder="Paste Offer Here"></textarea>
-<textarea id="answer" placeholder="Paste Answer Here"></textarea>
-<br>
-<input type="text" id="messageInput" placeholder="Type your message here">
-<button id="sendMessage">Send Message</button>
-<script>
+<button id="startGame">Start game</button>
 
-    const signalingServerURL = 'wss://netplayjs.varunramesh.net/';
-    const ws = new WebSocket(signalingServerURL);
-    ws.onmessage = (message) => {
-        console.log(`Server -> Client: ${message}`);
-    };
-
-    ws.onopen = () => {
-        console.log('Connected to the signaling server');
-    };
-
-    ws.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-    };
-
-    const peerA = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
-    });
-
-    peerA.onconnectionstatechange = function(event) {
-        console.log("Connection state change:", peerA.connectionState);
-    };
-
-    peerA.oniceconnectionstatechange = function(event) {
-        console.log("ICE Connection state change:", peerA.iceConnectionState);
-    };
-
-    peerA.addEventListener('error', function(event) {
-        console.log("Error:", event);
-    });
-
-    peerA.onicecandidate = event => {
-        if (event.candidate) {
-            console.log("ICE Candidate from Peer A:", JSON.stringify(event.candidate));
-        }
-    };
-
-
-    let dataChannel = peerA.createDataChannel("channel");
-
-    dataChannel.onopen = function (event) {
-        console.log("Data channel is open");
-    };
-
-    dataChannel.onmessage = function (event) {
-        console.log("Message from Peer B:", event.data);
-    };
-
-    document.getElementById("createOffer").onclick = async function () {
-        const offer = await peerA.createOffer();
-        await peerA.setLocalDescription(offer);
-        document.getElementById("offer").value = JSON.stringify(offer);
-    };
-
-    document.getElementById("answer").addEventListener("change", async function () {
-        const answer = JSON.parse(this.value);
-        await peerA.setRemoteDescription(answer);
-    });
-
-    document.getElementById("sendMessage").onclick = function () {
-        const message = document.getElementById("messageInput").value;
-        dataChannel.send(message);
-        console.log("Message sent to Peer B:", message);
-    };
-
-    // Handle ICE candidates
-    peerA.onicecandidate = function (event) {
-        if (event.candidate) {
-            console.log("ICE Candidate from Peer A:", JSON.stringify(event.candidate));
-        }
-    };
-</script>
 </body>
 </html>
