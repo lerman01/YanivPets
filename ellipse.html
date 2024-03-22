@@ -5,7 +5,7 @@
     <title>Vertical Ellipse with Points Starting at Bottom</title>
     <style>
         #myCanvas {
-            height: 96vh;
+            height: 98dvh;
             width: 98vw;
             display: block;
         }
@@ -13,20 +13,30 @@
 </head>
 <body>
 
-<input id="players" type="number" style="position: absolute" value="1" min="1">
+<div style="position: absolute">
+    <input id="players" type="number" value="1" min="1">
+    <button style="width: 100px; height: 20px" onclick="update(1)">+</button>
+    <button style="width: 100px; height: 20px" onclick="update(-1)">-</button>
+</div>
 <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
 
 <script>
-    addEventListener("DOMContentLoaded", ()=> {
+    const update = (delta) => {
+        const input = document.getElementById('players');
+        input.value = Number(document.getElementById('players').value) + delta
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+
+    addEventListener("DOMContentLoaded", () => {
         window.addEventListener('resize', () => drawVerticalEllipseWithPointsStartingAtBottom(), false);
-        document.getElementById('players').onchange = () => drawVerticalEllipseWithPointsStartingAtBottom()
+        document.getElementById('players').oninput = () => drawVerticalEllipseWithPointsStartingAtBottom()
     })
 
     function drawVerticalEllipseWithPointsStartingAtBottom() {
         const canvas = document.getElementById('myCanvas');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        let a,b
+        let a, b
         if (canvas.width > canvas.height) {
             a = canvas.height / 2.1
             b = canvas.width / 6;
