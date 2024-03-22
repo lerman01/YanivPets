@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Card Game Table</title>
+    <style>
+        #gameCanvas {
+            height: 98dvh;
+            width: 98vw;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div style="position: absolute">
+    <input id="players" type="number" value="1" min="1">
+    <button style="width: 100px; height: 20px" onclick="update(1)">+</button>
+    <button style="width: 100px; height: 20px" onclick="update(-1)">-</button>
+</div>
+<canvas id="gameCanvas" style="background-color: #eee;"></canvas>
+
+<script>
+    const update = (delta) => {
+        const input = document.getElementById('players');
+        input.value = Number(document.getElementById('players').value) + delta
+        input.dispatchEvent(new Event('input', {bubbles: true}))
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        draw()
+        window.addEventListener('resize', () => draw(), false);
+        document.getElementById('players').oninput = () => draw()
+
+    });
+
+    const draw = () => {
+        var canvas = document.getElementById("gameCanvas");
+        var ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+
+        // Define the table as a vertical rectangle
+        const width = 1000
+        var table = {x: canvas.width / 2 - (width / 2), y: 10, width, height: 900};
+
+        // Draw the table
+        ctx.fillStyle = "#0A7409"; // Dark green for the table
+        ctx.fillRect(table.x, table.y, table.width, table.height);
+
+        // Also, draw the ellipse for testing and visualization
+        drawEllipseForTesting(ctx, table.x + table.width / 2, table.y + table.height / 2, table.width / 2, table.height / 2);
+
+        // Define the number of players dynamically
+        var numberOfPlayers = document.getElementById('players').value; // Adjust this to test with different numbers of players
+        var playerPositions = calculatePlayerPositionsOnEllipse(numberOfPlayers, table.x, table.y, table.width, table.height);
+
+        // Project and draw players on the rectangle edges
+        playerPositions.forEach(function (position) {
+            projectAndDrawPlayer(ctx, position.x, position.y, table.x, table.y, table.width, table.height);
+        });
+    }
+
+    function drawEllipseForTesting(ctx, centerX, centerY, a, b) {
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, a, b, 0, 0, 2 * Math.PI);
+        ctx.strokeStyle = "rgba(255, 0, 0, 0.5)"; // Semi-transparent red for testing
+        ctx.stroke();
+    }
+
+    function calculatePlayerPositionsOnEllipse(numberOfPlayers, x, y, width, height) {
+        var positions = [];
+        var a = width / 2; // Semi-major axis, horizontally
+        var b = height / 2; // Semi-minor axis, vertically
+        var centerX = x + a;
+        var centerY = y + b;
+
+        for (let i = 0; i < numberOfPlayers; i++) {
+            let t = 2 * Math.PI * i / numberOfPlayers + Math.PI / 2;
+            let ellipseX = centerX + a * Math.cos(t);
+            let ellipseY = centerY + b * Math.sin(t);
+
+            positions.push({x: ellipseX, y: ellipseY});
+        }
+
+        return positions;
+    }
+
+    function projectAndDrawPlayer(ctx, ellipseX, ellipseY, rectX, rectY, rectWidth, rectHeight) {
+        // For a direct projection to the edge, calculate where the line from the center to the ellipse point intersects the rectangle's edge
+        var rectCenterX = rectX + rectWidth / 2;
+        var rectCenterY = rectY + rectHeight / 2;
+        var angle = Math.atan2(ellipseY - rectCenterY, ellipseX - rectCenterX);
+        var projectedX, projectedY;
+
+        // Project the point to the nearest edge
+        if (Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))) { // Closer to horizontal edges
+            projectedX = Math.cos(angle) > 0 ? rectX + rectWidth : rectX;
+            projectedY = rectCenterY + (rectWidth / 2) * Math.tan(angle) * Math.sign(Math.cos(angle));
+        } else { // Closer to vertical edges
+            projectedX = rectCenterX + (rectHeight / 2) / Math.tan(angle) * Math.sign(Math.sin(angle));
+            projectedY = Math.sin(angle) > 0 ? rectY + rectHeight : rectY;
+        }
+
+        // Draw the player at the projected position
+        ctx.fillStyle = "#FFD700"; // Gold for players
+        ctx.beginPath();
+        ctx.arc(projectedX, projectedY, 15, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+</script>
+</body>
+</html>
