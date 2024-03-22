@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vertical Ellipse with Points Starting at Bottom</title>
+    <style>
+        #myCanvas {
+            height: 98vh;
+            width: 98vw;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
+
+<script>
+    window.addEventListener('resize', () => drawVerticalEllipseWithPointsStartingAtBottom(), false);
+
+    function drawVerticalEllipseWithPointsStartingAtBottom(n = 12) {
+        var canvas = document.getElementById('myCanvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        a = canvas.height / 2.1
+        b = canvas.width / 6;
+
+        if (canvas.getContext) {
+            var ctx = canvas.getContext('2d');
+
+            // Move the origin to the middle of the canvas
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+
+            // Draw the vertical ellipse
+            ctx.beginPath();
+            ctx.ellipse(0, 0, b, a, 0, 0, 2 * Math.PI); // a and b are swapped for a vertical ellipse
+            ctx.stroke();
+
+            // Calculate and draw the points, starting from the bottom
+            const paths = []
+            for (let i = 0; i < n; i++) {
+                // Offset by PI / 2 to start at the bottom
+                let t = 2 * Math.PI * i / n + Math.PI / 2;
+                let x = b * Math.cos(t); // Use b for the x coordinate calculation
+                let y = a * Math.sin(t); // Use a for the y coordinate calculation
+
+                // Draw the point
+                const path = new Path2D();
+                path.index = i
+                path.arc(x, y, 5, 0, 2 * Math.PI, false); // Draw a small circle to represent the chair
+                ctx.fill(path);
+                paths.push(path)
+            }
+
+            canvas.onclick = e => {
+                for (const path of paths) {
+                    if (ctx.isPointInPath(path, e.offsetX, e.offsetY)) {
+                        console.log(path.index)
+                    }
+
+                }
+            }
+        }
+
+
+    }
+
+
+    drawVerticalEllipseWithPointsStartingAtBottom();
+
+</script>
+</body>
+</html>
