@@ -5,7 +5,7 @@
     <title>Vertical Ellipse with Points Starting at Bottom</title>
     <style>
         #myCanvas {
-            height: 98vh;
+            height: 96vh;
             width: 98vw;
             display: block;
         }
@@ -13,20 +13,32 @@
 </head>
 <body>
 
+<input id="players" type="number" style="position: absolute" value="1" min="1">
 <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
 
 <script>
-    window.addEventListener('resize', () => drawVerticalEllipseWithPointsStartingAtBottom(), false);
+    addEventListener("DOMContentLoaded", ()=> {
+        window.addEventListener('resize', () => drawVerticalEllipseWithPointsStartingAtBottom(), false);
+        document.getElementById('players').onchange = () => drawVerticalEllipseWithPointsStartingAtBottom()
+    })
 
-    function drawVerticalEllipseWithPointsStartingAtBottom(n = 12) {
-        var canvas = document.getElementById('myCanvas');
+    function drawVerticalEllipseWithPointsStartingAtBottom() {
+        const canvas = document.getElementById('myCanvas');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        a = canvas.height / 2.1
-        b = canvas.width / 6;
+        let a,b
+        if (canvas.width > canvas.height) {
+            a = canvas.height / 2.1
+            b = canvas.width / 6;
+        } else {
+            a = canvas.height / 2.1
+            b = canvas.width / 2.1;
+        }
+        const n = document.getElementById('players').value
+
 
         if (canvas.getContext) {
-            var ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d');
 
             // Move the origin to the middle of the canvas
             ctx.translate(canvas.width / 2, canvas.height / 2);
