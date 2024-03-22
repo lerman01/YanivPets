@@ -1,15 +1,15 @@
-
 /** A reliable data connection to a single peer. */
-class PeerConnection  {
+class SinglePeerConnection {
 
     constructor(client, peerID, initiator, iceServers) {
 
         this.client = client
         this.peerID = peerID
+        this.iceServers = iceServers
 
         // Create a RTCPeerConnection.
         this.peerConnection = new RTCPeerConnection({
-            iceServers
+            iceServers: this.iceServers
         })
 
         // Close the connection if the browser page is closed.
@@ -66,29 +66,38 @@ class PeerConnection  {
         }
     }
 
-    closed = false
     close() {
-        if (!closed) {
-            this.closed = true
-            this.peerConnection.close()
-            this.dataChannel?.close()
-            this.onClose.emit()
-        }
+        this.peerConnection.close()
+        this.dataChannel?.close()
     }
 
     setDataChannel(dataChannel) {
         this.dataChannel = dataChannel
         this.dataChannel.binaryType = "arraybuffer"
         this.dataChannel.onopen = e => {
-            console.log("OPEN", e)
-            // this.emit("open")
+            console.log("OPEN", this.peerID)
+
+            const otherConnections =
+                Array.from(connections.keys()).filter(peerId => peerId !== this.peerID)
+            this.send({
+                type: "connections",
+                value: otherConnections
+            })
         }
         this.dataChannel.onmessage = e => {
-            chatElement = document.getElementById('chat')
-            chatElement.value = e.data
-
-            // this.receiveStats.onMessage(e.data.byteLength)
-            // this.emit("data", msgpack.decode(new Uint8Array(e.data)))
+            const msg = JSON.parse(e.data)
+            if (msg.type === 'connections') {
+                const targetConnections = msg.value.filter(connection => !connections.has(connection))
+                console.log("additional connections", targetConnections)
+                for (const targetConnection of targetConnections) {
+                    const connection = new SinglePeerConnection(ws, targetConnection, true, this.iceServers);
+                    connections.set(targetConnection, connection);
+                }
+            }
+            if (msg.type === 'chat') {
+                chatElement = document.getElementById('chat')
+                chatElement.value = msg.value
+            }
         }
         this.dataChannel.onclose = e => {
             console.log("CLOSE", e)
@@ -124,8 +133,6 @@ class PeerConnection  {
 
     send(data) {
         if (this.dataChannel?.readyState !== "open") return
-        // let encoded = msgpack.encode(data)
-        // this.sendStats.onMessage(encoded.byteLength)
-        this.dataChannel.send(data)
+        this.dataChannel.send(JSON.stringify(data))
     }
 }
