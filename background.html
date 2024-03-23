@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rectangle with Points Starting at Bottom Center</title>
+    <script src="back.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+        #main-container {
+            background-color: #000538;
+            background-image: url("https://www.transparenttextures.com/patterns/felt.png");
+            width: 100dvw;
+            height: 100dvh;
+            font-weight: bold;
+            font-size: 20px;
+            color: white;
+
+        }
+
+        #bottom {
+            position: fixed;
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            top: 90%;
+        }
+
+        #top {
+            position: fixed;
+            display: flex;
+            width: 100%;
+            justify-content: space-evenly;
+        }
+
+        #right {
+            position: fixed;
+            right: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        #left {
+            position: fixed;
+            left: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+    </style>
+</head>
+<body>
+<div id="main-container">
+    <div id="right"></div>
+    <div id="top"></div>
+    <div id="left"></div>
+    <div id="bottom"></div>
+</div>
+
+
+</body>
+</html>
