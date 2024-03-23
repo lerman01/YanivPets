@@ -9,6 +9,11 @@
             margin: 0;
         }
 
+        @font-face {
+            font-family: Vinque;
+            src: url(vinque.ttf);
+        }
+
         #main-container {
             background-color: #1c1700;
             background-image: url(https://www.transparenttextures.com/patterns/fabric-1-light.png);
@@ -124,16 +129,25 @@
             color: black;
         }
 
+        @container card-desc-container (min-width: 700px) {
+            div {
+                font-size: 12em;
+            }
+        }
+
         .card-desc {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            container-name: card-desc-container;
             position: absolute;
             color: black;
-            top: 295px;
+            top: 292px;
             left: 30px;
-            font-size: 14px;
             font-family: sans-serif;
             font-weight: bold;
             width: 195px;
-            height: 50px;
+            height: 66px;
         }
 
 
@@ -184,7 +198,7 @@
                 <div class="back">
                     <img src="Seer.png">
                     <div class="card-title">Seer</div>
-                    <div class="card-desc">When the Seer wakes up, and they can either look at a player's card, or 2 cards in the center.
+                    <div class="card-desc">Can either look at a player's card, or 2 cards in the center
 
                     </div>
                 </div>
@@ -198,7 +212,10 @@
                 </div>
                 <div class="back">
                     <img src="Villager.png">
-                </div>
+                    <div style="font-family: Vinque;" class="card-title">Villager</div>
+                    <div style="font-family: Vinque; font-weight: normal" class="card-desc">No special abilities
+
+                    </div>
             </div>
         </div>
     </div>
